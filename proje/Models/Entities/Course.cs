@@ -12,10 +12,11 @@ namespace proje.Models.Entities
         // Bir ders bir akademisyen tarafından verilir (bir-bir ilişkisi)
         public int? Instructor_ID { get; set; }
         public Instructor Instructor { get; set; } // bir property'dir ve ilişkili eğitmen nesnesine erişim sağlar.
+        
+        public bool IsApproved { get; set; } = false;
 
-
-        // Bir dersi birden fazla öğrenci seçebilir (bir-çok ilişkisi)
-        public List<Student> Students { get; set; } = new List<Student>(); //başlangıçta boş bir liste atanması için kullanılır. Null hatalarını önlemek için
+        // Dersin öğrencileri (çoktan çoğa ilişki)
+        public List<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>(); //başlangıçta boş bir liste atanması için kullanılır. Null hatalarını önlemek için
 
     }
 }

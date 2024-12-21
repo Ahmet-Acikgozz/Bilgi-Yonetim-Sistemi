@@ -5,7 +5,7 @@
 namespace proje.Migrations
 {
     /// <inheritdoc />
-    public partial class mig1 : Migration
+    public partial class mig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,6 +18,7 @@ namespace proje.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     First_Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Last_Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Department = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -53,7 +54,8 @@ namespace proje.Migrations
                     Course_Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Credits = table.Column<int>(type: "int", nullable: false),
                     Instructor_ID = table.Column<int>(type: "int", nullable: true),
-                    Instructor_ID1 = table.Column<int>(type: "int", nullable: false)
+                    Instructor_ID1 = table.Column<int>(type: "int", nullable: false),
+                    IsApproved = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,24 +69,25 @@ namespace proje.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CourseStudent",
+                name: "StudentCourses",
                 columns: table => new
                 {
-                    Courses_SelectedCourse_ID = table.Column<int>(type: "int", nullable: false),
-                    StudentsStudent_ID = table.Column<int>(type: "int", nullable: false)
+                    Student_ID = table.Column<int>(type: "int", nullable: false),
+                    Course_ID = table.Column<int>(type: "int", nullable: false),
+                    IsApproved = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CourseStudent", x => new { x.Courses_SelectedCourse_ID, x.StudentsStudent_ID });
+                    table.PrimaryKey("PK_StudentCourses", x => new { x.Student_ID, x.Course_ID });
                     table.ForeignKey(
-                        name: "FK_CourseStudent_Courses_Courses_SelectedCourse_ID",
-                        column: x => x.Courses_SelectedCourse_ID,
+                        name: "FK_StudentCourses_Courses_Course_ID",
+                        column: x => x.Course_ID,
                         principalTable: "Courses",
                         principalColumn: "Course_ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CourseStudent_Students_StudentsStudent_ID",
-                        column: x => x.StudentsStudent_ID,
+                        name: "FK_StudentCourses_Students_Student_ID",
+                        column: x => x.Student_ID,
                         principalTable: "Students",
                         principalColumn: "Student_ID",
                         onDelete: ReferentialAction.Cascade);
@@ -96,16 +99,16 @@ namespace proje.Migrations
                 column: "Instructor_ID1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseStudent_StudentsStudent_ID",
-                table: "CourseStudent",
-                column: "StudentsStudent_ID");
+                name: "IX_StudentCourses_Course_ID",
+                table: "StudentCourses",
+                column: "Course_ID");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CourseStudent");
+                name: "StudentCourses");
 
             migrationBuilder.DropTable(
                 name: "Courses");

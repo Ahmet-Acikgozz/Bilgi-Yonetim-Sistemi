@@ -22,21 +22,6 @@ namespace proje.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CourseStudent", b =>
-                {
-                    b.Property<int>("Courses_SelectedCourse_ID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StudentsStudent_ID")
-                        .HasColumnType("int");
-
-                    b.HasKey("Courses_SelectedCourse_ID", "StudentsStudent_ID");
-
-                    b.HasIndex("StudentsStudent_ID");
-
-                    b.ToTable("CourseStudent");
-                });
-
             modelBuilder.Entity("proje.Models.Entities.Course", b =>
                 {
                     b.Property<int>("Course_ID")
@@ -57,6 +42,9 @@ namespace proje.Migrations
 
                     b.Property<int>("Instructor_ID1")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
 
                     b.HasKey("Course_ID");
 
@@ -90,6 +78,10 @@ namespace proje.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -131,19 +123,22 @@ namespace proje.Migrations
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("CourseStudent", b =>
+            modelBuilder.Entity("proje.Models.Entities.StudentCourse", b =>
                 {
-                    b.HasOne("proje.Models.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("Courses_SelectedCourse_ID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("Student_ID")
+                        .HasColumnType("int");
 
-                    b.HasOne("proje.Models.Entities.Student", null)
-                        .WithMany()
-                        .HasForeignKey("StudentsStudent_ID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("Course_ID")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Student_ID", "Course_ID");
+
+                    b.HasIndex("Course_ID");
+
+                    b.ToTable("StudentCourses");
                 });
 
             modelBuilder.Entity("proje.Models.Entities.Course", b =>
@@ -157,9 +152,38 @@ namespace proje.Migrations
                     b.Navigation("Instructor");
                 });
 
+            modelBuilder.Entity("proje.Models.Entities.StudentCourse", b =>
+                {
+                    b.HasOne("proje.Models.Entities.Course", "Course")
+                        .WithMany("StudentCourses")
+                        .HasForeignKey("Course_ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("proje.Models.Entities.Student", "Student")
+                        .WithMany("StudentCourses")
+                        .HasForeignKey("Student_ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("proje.Models.Entities.Course", b =>
+                {
+                    b.Navigation("StudentCourses");
+                });
+
             modelBuilder.Entity("proje.Models.Entities.Instructor", b =>
                 {
                     b.Navigation("Courses");
+                });
+
+            modelBuilder.Entity("proje.Models.Entities.Student", b =>
+                {
+                    b.Navigation("StudentCourses");
                 });
 #pragma warning restore 612, 618
         }

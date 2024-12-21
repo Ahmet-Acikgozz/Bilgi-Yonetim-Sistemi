@@ -1,0 +1,71 @@
+﻿@model List<proje.Models.Entities.Course>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ders Seç</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEJ6Yx7KnF58gBFi5e4ST2fvUhs-3dK2ZZtkTcsaHtiwIq51Jx9pBqJ6Wgfg0" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .course-label {
+            font-size: 1.1em;
+        }
+        .course-credit {
+            font-weight: bold;
+        }
+        .back-btn {
+            margin-top: 20px;
+        }
+        .btn-custom {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+        .btn-custom:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 class="text-center">Ders Seç</h2>
+
+        <form method="post" action="/Student/SelectCourses">
+            <div class="list-group">
+                @foreach (var course in Model)
+
+                {
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <input type="checkbox" name="selectedCourseIds" value="@course.Course_ID" id="course-@course.Course_ID" />
+                            <label for="course-@course.Course_ID" class="course-label">
+                                @course.Course_Name
+                            </label>
+                        </div>
+                        <span class="badge bg-info course-credit">Kredi: @(course.Credits)</span>
+                    </div>
+                }
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-custom">Dersleri Seç</button>
+            </div>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="/Student/Dashboard" class="btn btn-secondary back-btn">Geri</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0r5ghX6X0v8eu1d2B/7t9mS1O4UqF5ztj6BXM2V4XfE/lq0A" crossorigin="anonymous"></script>
+
+</body>
+</html>

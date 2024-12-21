@@ -15,6 +15,6 @@ namespace proje.Models.Entities
         public string Major { get; set; }
 
         // Bir öğrencinin birden fazla dersi olabilir (bir-çok ilişkisi)
-        public List<Course> Courses_Selected { get; set; } = new List<Course>();
+        public List<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>();
     }
 }
