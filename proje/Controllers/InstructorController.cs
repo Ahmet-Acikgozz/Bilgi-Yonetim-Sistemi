@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using proje.Data;
+using proje.Models.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace proje.Controllers
 {
@@ -43,14 +45,11 @@ namespace proje.Controllers
             HttpContext.Session.SetInt32("InstructorID", instructor.Instructor_ID);
             return RedirectToAction("Dashboard");
         }
+
         // Oturum kapatma (Logout)
-    
         public IActionResult Logout()
         {
-            // Session'dan InstructorID'yi temizle
-            HttpContext.Session.Remove("InstructorID");
-
-            // Login sayfasına yönlendir
+            HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
 
@@ -98,9 +97,19 @@ namespace proje.Controllers
                 return RedirectToAction("Dashboard");
             }
 
-            var students = course.StudentCourses.Select(sc => sc.Student).ToList();
+            ViewBag.ApprovedStudents = course.StudentCourses
+                .Where(sc => sc.IsApproved)
+                .Select(sc => sc.Student)
+                .ToList();
 
-            return View(students);
+            ViewBag.PendingStudents = course.StudentCourses
+                .Where(sc => !sc.IsApproved)
+                .Select(sc => sc.Student)
+                .ToList();
+
+            ViewBag.CourseId = courseId;
+
+            return View();
         }
 
         // Öğretmen tarafından ders onayı verme
@@ -124,6 +133,67 @@ namespace proje.Controllers
             }
 
             return RedirectToAction("ViewStudents", new { courseId = courseId });
+        }
+
+        // Şifre Değiştirme İşlemi (GET)
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            var instructorID = HttpContext.Session.GetInt32("InstructorID");
+
+            if (instructorID == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            return View();
+        }
+
+        // Şifre Değiştirme İşlemi (POST)
+        [HttpPost]
+        public IActionResult ChangePassword(string currentPassword, string newPassword, string confirmPassword)
+        {
+            var instructorID = HttpContext.Session.GetInt32("InstructorID");
+
+            if (instructorID == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var instructor = _context.Instructors.FirstOrDefault(i => i.Instructor_ID == instructorID);
+
+            if (instructor == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Mevcut şifrenin doğruluğunu kontrol et
+            if (instructor.Password != currentPassword)
+            {
+                ViewBag.ErrorMessage = "Mevcut şifre yanlış.";
+                return View();
+            }
+
+            // Yeni şifre eski şifreyle aynı olmasın
+            if (currentPassword == newPassword)
+            {
+                ViewBag.ErrorMessage = "Yeni şifre mevcut şifreyle aynı olamaz.";
+                return View();
+            }
+
+            // Yeni şifre ile onay şifresi eşleşiyor mu kontrol et
+            if (newPassword != confirmPassword)
+            {
+                ViewBag.ErrorMessage = "Yeni şifre ve onay şifresi eşleşmiyor.";
+                return View();
+            }
+
+            // Şifreyi güncelle
+            instructor.Password = newPassword;
+            _context.SaveChanges();
+
+            TempData["Message"] = "Şifreniz başarıyla güncellendi!";
+            return RedirectToAction("Dashboard");
         }
     }
 }

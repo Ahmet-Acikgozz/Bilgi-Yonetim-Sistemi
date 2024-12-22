@@ -41,6 +41,9 @@
     </style>
 </head>
 <body>
+    <div class="d-flex justify-content-end">
+        <a asp-area="" asp-controller="Student" asp-action="Logout" class="btn btn-danger btn-custom">Çıkış Yap</a>
+    </div>
     <div class="container mt-5">
         <!-- Dashboard Header -->
         <div class="dashboard-header text-center">
@@ -68,6 +71,11 @@
             </div>
         </div>
 
+
+        <div class="d-flex justify-content-center mt-4">
+            <a href="/Student/ChangePassword" class="btn btn-secondary btn-custom">Şifre Değiştir</a>
+        </div>
+        
         <!-- Courses List -->
         <h3>Seçtiğiniz Dersler:</h3>
         <ul class="course-list">

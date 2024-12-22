@@ -135,6 +135,60 @@ namespace proje.Controllers
             TempData["Message"] = "Dersler başarıyla seçildi!";
             return RedirectToAction("Dashboard");
         }
+        // Şifre Değiştirme Sayfası (GET)
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            var studentEmail = HttpContext.Session.GetString("StudentEmail");
+
+            if (studentEmail == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            return View();
+        }
+
+        // Şifre Değiştirme İşlemi (POST)
+        [HttpPost]
+        public IActionResult ChangePassword(string currentPassword, string newPassword, string confirmPassword)
+        {
+            var studentEmail = HttpContext.Session.GetString("StudentEmail");
+            if (studentEmail == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var student = _context.Students.FirstOrDefault(s => s.Email == studentEmail);
+
+            if (student == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Mevcut şifrenin doğruluğunu kontrol et
+            if (student.Password != currentPassword)
+            {
+                ViewBag.ErrorMessage = "Mevcut şifre yanlış.";
+                return View();
+            }
+
+            // Yeni şifre eski şifreyle aynı olmasın
+            if (currentPassword == newPassword)
+            {
+                ViewBag.ErrorMessage = "Yeni şifre mevcut şifreyle aynı olamaz.";
+                return View();
+            }
+
+            
+
+            // Şifreyi güncelle
+            student.Password = newPassword;
+            _context.SaveChanges();
+
+            TempData["Message"] = "Şifreniz başarıyla güncellendi!";
+            return RedirectToAction("Dashboard");
+        }
     }
 }
 
